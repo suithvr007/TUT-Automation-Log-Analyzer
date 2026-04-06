@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RF Test Analyser</title>
+<style>
+  :root {
+    --bg: #f0f2f5; --card: #ffffff; --border: #e2e6ea; --text: #1a1a2e;
+    --muted: #6b7280; --accent: #2563eb; --header-bg: #1e1e2e; --header-fg: #ffffff;
+    --pass: #16a34a; --fail: #dc2626; --radius: 10px; --shadow: 0 1px 4px rgba(0,0,0,0.08);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+  header { background: var(--header-bg); color: var(--header-fg); padding: 0 24px; height: 54px; display: flex; align-items: center; gap: 10px; }
+  header svg { width: 20px; height: 20px; flex-shrink: 0; }
+  header h1 { font-size: 15px; font-weight: 600; }
+
+  #upload-zone { margin: 28px auto; max-width: 880px; padding: 0 16px; }
+  #dropzone { border: 2px dashed #93c5fd; border-radius: var(--radius); background: #eff6ff; padding: 44px 24px; text-align: center; cursor: pointer; transition: background .15s, border-color .15s; }
+  #dropzone.drag { background: #dbeafe; border-color: var(--accent); }
+  #dropzone svg { width: 38px; height: 38px; margin-bottom: 12px; }
+  #dropzone .main { font-size: 15px; font-weight: 600; color: var(--accent); margin-bottom: 4px; }
+  #dropzone .sub  { font-size: 13px; color: var(--muted); }
+  #dropzone .note { font-size: 12px; color: #9ca3af; margin-top: 6px; }
+  #browse-btn { margin-top: 14px; display: inline-block; background: var(--accent); color: white; font-size: 13px; font-weight: 500; padding: 8px 20px; border-radius: 6px; cursor: pointer; border: none; }
+  #browse-btn:hover { background: #1d4ed8; }
+  #file-input { display: none; }
+
+  #progress-zone { display: none; max-width: 880px; margin: 28px auto; padding: 0 16px; }
+  #progress-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; box-shadow: var(--shadow); }
+  .prog-title { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+  #prog-file  { font-size: 12px; color: var(--muted); font-family: monospace; margin-bottom: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  #prog-track { background: #e5e7eb; border-radius: 99px; height: 8px; overflow: hidden; margin-bottom: 8px; }
+  #prog-fill  { background: var(--accent); height: 100%; border-radius: 99px; width: 0%; transition: width .3s; }
+  #prog-pct   { font-size: 12px; color: var(--muted); margin-bottom: 12px; }
+  #prog-stats { display: flex; gap: 24px; font-size: 13px; color: var(--muted); }
+
+  #error-msg { display: none; max-width: 880px; margin: 0 auto 16px; padding: 0 16px; }
+  #error-msg div { background: #fef2f2; border: 1px solid #fca5a5; color: #991b1b; border-radius: 8px; padding: 10px 14px; font-size: 13px; }
+
+  #results { display: none; max-width: 880px; margin: 0 auto; padding: 0 16px 40px; }
+  #file-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; flex-wrap: wrap; gap: 8px; }
+  #file-name { font-size: 13px; color: var(--muted); font-family: monospace; }
+  #reset-btn { font-size: 12px; padding: 4px 12px; border-radius: 6px; border: 1px solid var(--border); background: var(--card); color: var(--muted); cursor: pointer; }
+  #reset-btn:hover { background: var(--bg); }
+
+  #summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin-bottom: 12px; }
+  .stat-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; box-shadow: var(--shadow); }
+  .stat-card .val { font-size: 26px; font-weight: 700; line-height: 1; }
+  .stat-card .lbl { font-size: 12px; color: var(--muted); margin-top: 4px; }
+  .stat-card.pass .val { color: var(--pass); }
+  .stat-card.fail .val { color: var(--fail); }
+  .stat-card.cat  .val { color: var(--accent); }
+
+  #pass-bar-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; margin-bottom: 12px; box-shadow: var(--shadow); }
+  .bar-label { font-size: 12px; color: var(--muted); margin-bottom: 6px; display: flex; justify-content: space-between; }
+  #bar-track { background: #fee2e2; border-radius: 99px; height: 10px; overflow: hidden; }
+  #bar-fill  { background: #16a34a; height: 100%; border-radius: 99px; transition: width .6s ease; }
+
+  #filter-bar { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
+  #filter-bar label { font-size: 13px; color: var(--muted); }
+  #filter-select { font-size: 13px; padding: 5px 10px; border-radius: 6px; border: 1px solid var(--border); background: var(--card); color: var(--text); cursor: pointer; max-width: 340px; }
+
+  .section { border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border); margin-bottom: 10px; box-shadow: var(--shadow); }
+  .section-header { display: flex; align-items: center; gap: 10px; padding: 12px 16px; cursor: pointer; user-select: none; color: white; }
+  .section-header:hover { filter: brightness(1.06); }
+  .section-title { font-size: 14px; font-weight: 600; flex: 1; }
+  .section-count { font-size: 12px; background: rgba(255,255,255,.22); padding: 2px 10px; border-radius: 99px; white-space: nowrap; }
+  .section-arrow { font-size: 11px; transition: transform .2s; }
+  .section-arrow.open { transform: rotate(90deg); }
+  .section-body { background: var(--card); display: none; }
+  .section-body.open { display: block; }
+
+  .fix-box { margin: 12px 14px; padding: 10px 14px; border-left: 4px solid; font-size: 13px; line-height: 1.65; border-radius: 0 6px 6px 0; }
+  .fix-box strong { display: block; font-size: 12px; margin-bottom: 4px; }
+
+  .test-list { padding: 0 14px 4px; }
+  .test-row { border-radius: 6px; border: 1px solid var(--border); margin-bottom: 6px; overflow: hidden; }
+  .test-row-header { display: flex; align-items: flex-start; gap: 8px; padding: 8px 10px; cursor: pointer; background: #fafafa; transition: background .1s; }
+  .test-row-header:hover { background: #f3f4f6; }
+  .test-x      { font-size: 10px; flex-shrink: 0; margin-top: 3px; }
+  .test-name   { font-size: 12px; font-family: 'Consolas', monospace; flex: 1; line-height: 1.5; color: #333; word-break: break-word; }
+  .test-toggle { font-size: 11px; color: var(--accent); flex-shrink: 0; margin-top: 2px; white-space: nowrap; }
+  .test-msg    { display: none; font-family: 'Consolas', monospace; font-size: 11.5px; background: #f5f5f5; color: #444; padding: 8px 12px; border-top: 1px solid var(--border); white-space: pre-wrap; word-break: break-word; line-height: 1.6; max-height: 200px; overflow-y: auto; }
+  .test-msg.open { display: block; }
+
+  .paginator { display: flex; align-items: center; gap: 8px; padding: 8px 14px 12px; font-size: 12px; color: var(--muted); border-top: 1px solid var(--border); margin-top: 4px; }
+  .paginator button { font-size: 12px; padding: 3px 10px; border-radius: 5px; border: 1px solid var(--border); background: var(--card); cursor: pointer; }
+  .paginator button:disabled { opacity: .4; cursor: default; }
+  .paginator span { flex: 1; text-align: center; }
+
+  #all-passed { display: none; text-align: center; padding: 40px; background: var(--card); border-radius: var(--radius); border: 1px solid #bbf7d0; color: var(--pass); font-size: 15px; font-weight: 600; }
+  footer { text-align: center; padding: 20px; font-size: 12px; color: #aaa; }
+  footer a { color: #93c5fd; text-decoration: none; }
+</style>
+</head>
+<body>
+
+<header>
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+    <polyline points="14 2 14 8 20 8"/>
+    <line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>
+  </svg>
+  <h1>Robot Framework Test Analyser</h1>
+</header>
+
+<div id="upload-zone">
+  <div id="dropzone">
+    <svg viewBox="0 0 24 24" fill="none" stroke="#93c5fd" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+      <polyline points="14 2 14 8 20 8"/>
+    </svg>
+    <p class="main">Drop your output.xml here</p>
+    <p class="sub">Robot Framework XML result file</p>
+    <p class="note"></p>
+    <button id="browse-btn">Browse file</button>
+    <input type="file" id="file-input" accept=".xml">
+  </div>
+</div>
+
+<div id="error-msg"><div id="error-text"></div></div>
+
+<div id="progress-zone">
+  <div id="progress-card">
+    <div class="prog-title">Parsing file…</div>
+    <div id="prog-file"></div>
+    <div id="prog-track"><div id="prog-fill"></div></div>
+    <div id="prog-pct">0%</div>
+    <div id="prog-stats">
+      <span>✓ <b id="prog-pass">0</b> passed</span>&nbsp;&nbsp;
+      <span>✕ <b id="prog-fail">0</b> failed</span>
+    </div>
+  </div>
+</div>
+
+<div id="results">
+  <div id="file-bar">
+    <span id="file-name"></span>
+    <button id="reset-btn">↩ Upload new file</button>
+  </div>
+  <div id="summary">
+    <div class="stat-card">      <div class="val" id="s-total">—</div> <div class="lbl">Total tests</div></div>
+    <div class="stat-card pass"> <div class="val" id="s-passed">—</div><div class="lbl">Passed</div></div>
+    <div class="stat-card fail"> <div class="val" id="s-failed">—</div><div class="lbl">Failed</div></div>
+    <div class="stat-card cat">  <div class="val" id="s-cats">—</div>  <div class="lbl">Failure categories</div></div>
+  </div>
+  <div id="pass-bar-card">
+    <div class="bar-label"><span>Pass rate</span><span id="bar-pct-lbl">0%</span></div>
+    <div id="bar-track"><div id="bar-fill"></div></div>
+  </div>
+  <div id="filter-bar">
+    <label for="filter-select">Filter:</label>
+    <select id="filter-select"></select>
+  </div>
+  <div id="sections-container"></div>
+  <div id="all-passed">✓ All tests passed!</div>
+</div>
+
+<footer>RF Test Analyser &nbsp;·&nbsp; No data leaves your browser &nbsp;·&nbsp; <a href="https://pages.github.com" target="_blank">Host free on GitHub Pages</a></footer>
+
+<script>
+/* ── Failure patterns ─────────────────────────────────────────────────────── */
+const PATTERNS = [
+  { re: /UiObjectNotFoundError|UiObjectNotFoundException|UI object identification failed/i,
+    category: "UI Element Not Found", color: "#c0392b",
+    fix: "The UI element could not be located on screen. Check if the Android UI layout has changed, verify element selectors (text, resourceId, className), and ensure the device is in the expected state. Add explicit waits before element interactions." },
+  { re: /ValueError.*int|str.*cannot be interpreted as an integer|TypeError.*'str' object cannot/i,
+    category: "Type Error (str/int mismatch)", color: "#d35400",
+    fix: "A string is being passed where an integer is expected. Add explicit int() conversion in the keyword/library code. Check test data and variable bindings for unexpected string types." },
+  { re: /No keyword with name|keyword.*not found/i,
+    category: "Missing Keyword", color: "#6c3483",
+    fix: "A keyword referenced in the test does not exist or is not imported. Check for typos in the keyword name, verify the correct library/resource file is imported, and ensure the keyword is in scope." },
+  { re: /ADB command failed|adb.*forward|Could not get display/i,
+    category: "ADB / Device Error", color: "#1a5276",
+    fix: "An ADB command failed due to device connectivity or port issues. Ensure the device is connected and authorised, check USB/network connection, and verify no port conflicts." },
+  { re: /screen saver is not|Navigation Mode is not available|Variable.*not found/i,
+    category: "Device State / Config Mismatch", color: "#1e5631",
+    fix: "The device is not in the expected state or a config/variable is missing. Verify device settings match test preconditions and confirm the feature is supported on this device/OS version." },
+  { re: /Connection aborted|RemoteDisconnected|Remote end closed/i,
+    category: "Network / Remote Disconnect", color: "#7b241c",
+    fix: "The remote connection dropped during the test. Check network stability, device health, and consider adding retry logic or increasing timeout values." },
+  { re: /Setup failed|teardown failed/i,
+    category: "Setup / Teardown Failure", color: "#922b5e",
+    fix: "The test setup or teardown step failed before the actual test could run. Fix the underlying setup issue first — other failures in the same test may be secondary." },
+  { re: /LightDoze mode=\s*$|doze mode/i,
+    category: "Power State Error", color: "#4a4a4a",
+    fix: "The device did not enter the expected power/doze state. Verify power management settings, check for OEM customisations, and confirm the correct OEMConfig keys are applied." },
+  { re: /SyntaxError|invalid syntax/i,
+    category: "Syntax / Variable Resolution Error", color: "#0e6251",
+    fix: "A variable resolved to an empty or unexpected value causing a syntax error. Check all required variables (device serial, API level) are set correctly in suite setup. An empty device serial is a common cause." },
+  { re: /IndexError|out of the range/i,
+    category: "Index / List Error", color: "#784212",
+    fix: "An empty list is being accessed by index. A UI query likely returned no results. Add existence checks before accessing list elements." },
+  { re: /Screen capture is disabled/i,
+    category: "Screenshot Disabled", color: "#1f618d",
+    fix: "A previous test disabled screenshots and teardown did not restore the setting. Ensure screenshot state is reset in test teardown." },
+];
+
+/* Catch-all for 'Testcase failed' with no further detail */
+const UNKNOWN_DETAIL = {
+  category: "Testcase Failed (no detail)", color: "#7f8c8d",
+  fix: "The test reported 'Testcase failed' with no further error message. This usually means the test framework caught and swallowed the real exception, or a shared setup step failed silently. Enable verbose logging, check suite setup, and verify device connectivity. Review the full HTML Robot Framework report for the actual failing keyword."
+};
+const UNKNOWN = {
+  category: "General / Unknown Failure", color: "#555555",
+  fix: "No specific error pattern matched. Review the full test log for the root cause. Check recent code or config changes that may have affected this test."
+};
+
+function classify(msg) {
+  for (const p of PATTERNS) if (p.re.test(msg)) return p;
+  if (!msg || /^testcase failed$/i.test(msg.trim())) return UNKNOWN_DETAIL;
+  return UNKNOWN;
+}
+
+function unesc(s) {
+  return s.replace(/&lt;/g,"<").replace(/&gt;/g,">")
+          .replace(/&amp;/g,"&").replace(/&quot;/g,'"').replace(/&apos;/g,"'");
+}
+
+/* ── Streaming chunked parser ─────────────────────────────────────────────── */
+/*
+ * Robot Framework XML has two different formats for the status message
+ * depending on the RF version:
+ *
+ *   Format A (attribute):  <status status="FAIL" message="Error detail..." />
+ *   Format B (text node):  <status status="FAIL">Error detail...</status>
+ *
+ * We must handle BOTH. We also always use the LAST <status> inside each
+ * <test> block — the test's own status is always written last, after all
+ * nested keyword statuses.
+ */
+const CHUNK_SIZE = 8 * 1024 * 1024;
+
+function streamParseFile(file, onProgress, onDone) {
+  const passed = [], failed = [];
+  let offset = 0, carry = "";
+  const decoder = new TextDecoder("utf-8", { fatal: false });
+
+  const TEST_RE = /<test\b([^>]*)>([\s\S]*?)<\/test>/g;
+  const NAME_RE = /\bname="([^"]*)"/;
+
+  // Self-closing:  <status status="FAIL" message="..." />
+  const SC_RE   = /<status\b([^>]*?)\/>/g;
+  // Text content:  <status status="FAIL">message text</status>
+  // [^<]* ensures we only capture plain text, not nested XML
+  const TEXT_RE = /<status\b([^>]*)>([^<]*)<\/status>/g;
+
+  const ST_RE  = /\bstatus="([^"]*)"/;
+  const MSG_RE = /\bmessage="([^"]*)"/;
+
+  function extractLastStatus(inner) {
+    // Collect all status elements with their position, handling both formats
+    const items = [];
+
+    SC_RE.lastIndex = 0;
+    let m;
+    while ((m = SC_RE.exec(inner)) !== null) {
+      items.push({ pos: m.index, attrs: m[1], text: null });
+    }
+
+    TEXT_RE.lastIndex = 0;
+    while ((m = TEXT_RE.exec(inner)) !== null) {
+      items.push({ pos: m.index, attrs: m[1], text: m[2].trim() });
+    }
+
+    if (!items.length) return null;
+
+    // The last status by position is the test's own direct child
+    items.sort((a, b) => a.pos - b.pos);
+    return items[items.length - 1];
+  }
+
+  function processText(text) {
+    const combined = carry + text;
+    let lastEnd = 0;
+
+    TEST_RE.lastIndex = 0;
+    let m;
+    while ((m = TEST_RE.exec(combined)) !== null) {
+      const tagAttrs = m[1];
+      const inner    = m[2];
+      lastEnd = TEST_RE.lastIndex;
+
+      const nameM = NAME_RE.exec(tagAttrs);
+      if (!nameM) continue;
+      const name = unesc(nameM[1]);
+
+      const last = extractLastStatus(inner);
+      if (!last) continue;
+
+      const stM = ST_RE.exec(last.attrs);
+      if (!stM) continue;
+      const st = stM[1];
+
+      // Message: prefer text content (Format B), fall back to message attr (Format A)
+      let msg = "";
+      if (last.text !== null && last.text !== "") {
+        msg = unesc(last.text);
+      } else {
+        const msgM = MSG_RE.exec(last.attrs);
+        if (msgM) msg = unesc(msgM[1]).trim();
+      }
+
+      if (st === "FAIL") failed.push({ name, msg, pattern: classify(msg) });
+      else               passed.push(name);
+    }
+
+    carry = lastEnd > 0 ? combined.slice(lastEnd) : combined;
+    if (carry.length > CHUNK_SIZE * 3) carry = carry.slice(-CHUNK_SIZE);
+  }
+
+  function readNext() {
+    if (offset >= file.size) {
+      if (carry.includes("<test ") || carry.includes("<test\t")) processText("");
+      onDone(passed, failed);
+      return;
+    }
+    const slice  = file.slice(offset, offset + CHUNK_SIZE);
+    const reader = new FileReader();
+    reader.onload = e => {
+      const text = decoder.decode(new Uint8Array(e.target.result), { stream: true });
+      processText(text);
+      offset += CHUNK_SIZE;
+      onProgress(Math.min(offset / file.size, 1), passed.length, failed.length, offset);
+      setTimeout(readNext, 0);
+    };
+    reader.onerror = () => showError("Error reading file at byte " + offset);
+    reader.readAsArrayBuffer(slice);
+  }
+
+  readNext();
+}
+
+/* ── Rendering ────────────────────────────────────────────────────────────── */
+const PER_PAGE = 50;
+let globalGrouped = {};
+
+function hexToRgba(hex, a) {
+  const r = parseInt(hex.slice(1,3),16), g = parseInt(hex.slice(3,5),16), b = parseInt(hex.slice(5,7),16);
+  return `rgba(${r},${g},${b},${a})`;
+}
+
+function buildGrouped(failed) {
+  const g = {};
+  failed.forEach(f => {
+    if (!g[f.pattern.category]) g[f.pattern.category] = [];
+    g[f.pattern.category].push(f);
+  });
+  return g;
+}
+
+function renderSection(cat, tests, expanded) {
+  const p = tests[0].pattern;
+  const sec = document.createElement("div");
+  sec.className = "section";
+
+  const header = document.createElement("div");
+  header.className = "section-header";
+  header.style.background = p.color;
+  header.innerHTML = `
+    <span class="section-title">${cat}</span>
+    <span class="section-count">${tests.length.toLocaleString()} test${tests.length!==1?"s":""}</span>
+    <span class="section-arrow${expanded?" open":""}">▶</span>`;
+
+  const body = document.createElement("div");
+  body.className = "section-body" + (expanded ? " open" : "");
+
+  const fixBox = document.createElement("div");
+  fixBox.className = "fix-box";
+  fixBox.style.cssText = `background:${hexToRgba(p.color,.07)};border-color:${p.color}`;
+  fixBox.innerHTML = `<strong style="color:${p.color}">Suggested fix</strong>${p.fix}`;
+  body.appendChild(fixBox);
+
+  const listWrap = document.createElement("div");
+  body.appendChild(listWrap);
+  let page = 0;
+
+  function renderPage() {
+    listWrap.innerHTML = "";
+    const list  = document.createElement("div");
+    list.className = "test-list";
+    const start = page * PER_PAGE;
+    tests.slice(start, start + PER_PAGE).forEach(t => {
+      const row = document.createElement("div");
+      row.className = "test-row";
+      const rh = document.createElement("div");
+      rh.className = "test-row-header";
+      const hasMsg = !!t.msg && !/^testcase failed$/i.test(t.msg.trim());
+      rh.innerHTML = `
+        <span class="test-x" style="color:${p.color}">✕</span>
+        <span class="test-name">${t.name}</span>
+        <span class="test-toggle">${hasMsg ? "details ▾" : ""}</span>`;
+      const msgDiv = document.createElement("div");
+      msgDiv.className = "test-msg";
+      if (hasMsg) {
+        msgDiv.textContent = t.msg;
+        rh.onclick = () => {
+          const open = msgDiv.classList.toggle("open");
+          rh.querySelector(".test-toggle").textContent = open ? "hide ▴" : "details ▾";
+        };
+      }
+      row.append(rh, msgDiv);
+      list.appendChild(row);
+    });
+    listWrap.appendChild(list);
+
+    if (tests.length > PER_PAGE) {
+      const totalPages = Math.ceil(tests.length / PER_PAGE);
+      const end = Math.min(start + PER_PAGE, tests.length);
+      const pag = document.createElement("div");
+      pag.className = "paginator";
+      const prev = document.createElement("button");
+      prev.textContent = "← Prev"; prev.disabled = page === 0;
+      prev.onclick = () => { page--; renderPage(); };
+      const info = document.createElement("span");
+      info.textContent = `Page ${page+1} of ${totalPages}  (${(start+1).toLocaleString()}–${end.toLocaleString()} of ${tests.length.toLocaleString()})`;
+      const next = document.createElement("button");
+      next.textContent = "Next →"; next.disabled = page >= totalPages - 1;
+      next.onclick = () => { page++; renderPage(); };
+      pag.append(prev, info, next);
+      listWrap.appendChild(pag);
+    }
+  }
+  renderPage();
+
+  header.onclick = () => {
+    header.querySelector(".section-arrow").classList.toggle("open");
+    body.classList.toggle("open");
+  };
+  sec.append(header, body);
+  return sec;
+}
+
+function renderSections(grouped) {
+  const container = document.getElementById("sections-container");
+  const allPassed = document.getElementById("all-passed");
+  container.innerHTML = "";
+  if (!Object.keys(grouped).length) { allPassed.style.display = "block"; return; }
+  allPassed.style.display = "none";
+  Object.entries(grouped)
+    .sort((a,b) => b[1].length - a[1].length)
+    .forEach(([cat, tests], i) => container.appendChild(renderSection(cat, tests, i === 0)));
+}
+
+function showResults(filename, passed, failed) {
+  document.getElementById("progress-zone").style.display = "none";
+  document.getElementById("results").style.display = "block";
+  document.getElementById("file-name").textContent = filename;
+
+  const total = passed.length + failed.length;
+  const pct   = total ? Math.round(passed.length / total * 100) : 0;
+
+  document.getElementById("s-total").textContent  = total.toLocaleString();
+  document.getElementById("s-passed").textContent = passed.length.toLocaleString();
+  document.getElementById("s-failed").textContent = failed.length.toLocaleString();
+
+  globalGrouped = buildGrouped(failed);
+  document.getElementById("s-cats").textContent       = Object.keys(globalGrouped).length;
+  document.getElementById("bar-pct-lbl").textContent  = pct + "%";
+  document.getElementById("bar-fill").style.width     = pct + "%";
+
+  const sel = document.getElementById("filter-select");
+  sel.innerHTML = '<option value="all">All categories</option>';
+  Object.entries(globalGrouped)
+    .sort((a,b) => b[1].length - a[1].length)
+    .forEach(([cat, tests]) => {
+      const opt = document.createElement("option");
+      opt.value = cat;
+      opt.textContent = `${cat} (${tests.length.toLocaleString()})`;
+      sel.appendChild(opt);
+    });
+  sel.onchange = () => {
+    const v = sel.value;
+    renderSections(v === "all" ? globalGrouped : { [v]: globalGrouped[v] });
+  };
+  renderSections(globalGrouped);
+}
+
+function showError(msg) {
+  document.getElementById("error-msg").style.display    = "block";
+  document.getElementById("error-text").textContent     = msg;
+  document.getElementById("progress-zone").style.display = "none";
+}
+function hideError() { document.getElementById("error-msg").style.display = "none"; }
+
+function startParsing(file) {
+  if (!file) return;
+  if (!file.name.toLowerCase().endsWith(".xml")) { showError("Please select a Robot Framework XML output file (.xml)"); return; }
+  hideError();
+  document.getElementById("upload-zone").style.display   = "none";
+  document.getElementById("progress-zone").style.display = "block";
+  document.getElementById("prog-file").textContent =
+    file.name + "  (" + (file.size / 1048576).toFixed(1) + " MB)";
+
+  streamParseFile(file,
+    (fraction, nPass, nFail, bytesRead) => {
+      const pct = (fraction * 100).toFixed(0);
+      document.getElementById("prog-fill").style.width = pct + "%";
+      document.getElementById("prog-pct").textContent  =
+        pct + "%  —  " + (bytesRead/1048576).toFixed(0) + " MB / " + (file.size/1048576).toFixed(1) + " MB";
+      document.getElementById("prog-pass").textContent = nPass.toLocaleString();
+      document.getElementById("prog-fail").textContent = nFail.toLocaleString();
+    },
+    (passed, failed) => {
+      if (!passed.length && !failed.length) {
+        document.getElementById("upload-zone").style.display   = "block";
+        document.getElementById("progress-zone").style.display = "none";
+        showError("No test results found. Make sure this is a Robot Framework output.xml file.");
+        return;
+      }
+      showResults(file.name, passed, failed);
+    }
+  );
+}
+
+document.getElementById("browse-btn").onclick  = () => document.getElementById("file-input").click();
+document.getElementById("file-input").onchange = e  => startParsing(e.target.files[0]);
+document.getElementById("reset-btn").onclick   = () => {
+  document.getElementById("upload-zone").style.display   = "block";
+  document.getElementById("results").style.display       = "none";
+  document.getElementById("progress-zone").style.display = "none";
+  document.getElementById("file-input").value = "";
+  globalGrouped = {};
+};
+const dz = document.getElementById("dropzone");
+dz.ondragover = e => { e.preventDefault(); dz.classList.add("drag"); };
+dz.ondragleave = () => dz.classList.remove("drag");
+dz.ondrop = e => { e.preventDefault(); dz.classList.remove("drag"); startParsing(e.dataTransfer.files[0]); };
+</script>
+</body>
+</html>
