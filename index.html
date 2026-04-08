@@ -12,11 +12,12 @@
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
   header { background: var(--header-bg); color: var(--header-fg); padding: 0 24px; height: 54px; display: flex; align-items: center; gap: 10px; }
   header svg { width: 20px; height: 20px; flex-shrink: 0; }
   header h1 { font-size: 15px; font-weight: 600; }
 
-  #upload-zone { margin: 28px auto; max-width: 880px; padding: 0 16px; }
+  #upload-zone { margin: 28px auto; max-width: 900px; padding: 0 16px; }
   #dropzone { border: 2px dashed #93c5fd; border-radius: var(--radius); background: #eff6ff; padding: 44px 24px; text-align: center; cursor: pointer; transition: background .15s, border-color .15s; }
   #dropzone.drag { background: #dbeafe; border-color: var(--accent); }
   #dropzone svg { width: 38px; height: 38px; margin-bottom: 12px; }
@@ -27,7 +28,7 @@
   #browse-btn:hover { background: #1d4ed8; }
   #file-input { display: none; }
 
-  #progress-zone { display: none; max-width: 880px; margin: 28px auto; padding: 0 16px; }
+  #progress-zone { display: none; max-width: 900px; margin: 28px auto; padding: 0 16px; }
   #progress-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; box-shadow: var(--shadow); }
   .prog-title { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
   #prog-file  { font-size: 12px; color: var(--muted); font-family: monospace; margin-bottom: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -36,10 +37,10 @@
   #prog-pct   { font-size: 12px; color: var(--muted); margin-bottom: 12px; }
   #prog-stats { display: flex; gap: 24px; font-size: 13px; color: var(--muted); }
 
-  #error-msg { display: none; max-width: 880px; margin: 0 auto 16px; padding: 0 16px; }
+  #error-msg { display: none; max-width: 900px; margin: 0 auto 16px; padding: 0 16px; }
   #error-msg div { background: #fef2f2; border: 1px solid #fca5a5; color: #991b1b; border-radius: 8px; padding: 10px 14px; font-size: 13px; }
 
-  #results { display: none; max-width: 880px; margin: 0 auto; padding: 0 16px 40px; }
+  #results { display: none; max-width: 900px; margin: 0 auto; padding: 0 16px 40px; }
   #file-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; flex-wrap: wrap; gap: 8px; }
   #file-name { font-size: 13px; color: var(--muted); font-family: monospace; }
   #reset-btn { font-size: 12px; padding: 4px 12px; border-radius: 6px; border: 1px solid var(--border); background: var(--card); color: var(--muted); cursor: pointer; }
@@ -60,12 +61,18 @@
 
   #filter-bar { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
   #filter-bar label { font-size: 13px; color: var(--muted); }
-  #filter-select { font-size: 13px; padding: 5px 10px; border-radius: 6px; border: 1px solid var(--border); background: var(--card); color: var(--text); cursor: pointer; max-width: 340px; }
+  #filter-select { font-size: 13px; padding: 5px 10px; border-radius: 6px; border: 1px solid var(--border); background: var(--card); color: var(--text); cursor: pointer; max-width: 360px; }
+
+  #mode-bar { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
+  #mode-bar span { font-size: 13px; color: var(--muted); }
+  .mode-btn { font-size: 12px; padding: 4px 12px; border-radius: 6px; border: 1px solid var(--border); background: var(--card); color: var(--muted); cursor: pointer; transition: all .15s; }
+  .mode-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
 
   .section { border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border); margin-bottom: 10px; box-shadow: var(--shadow); }
   .section-header { display: flex; align-items: center; gap: 10px; padding: 12px 16px; cursor: pointer; user-select: none; color: white; }
   .section-header:hover { filter: brightness(1.06); }
   .section-title { font-size: 14px; font-weight: 600; flex: 1; }
+  .section-platform { font-size: 11px; background: rgba(255,255,255,.18); padding: 1px 7px; border-radius: 99px; white-space: nowrap; }
   .section-count { font-size: 12px; background: rgba(255,255,255,.22); padding: 2px 10px; border-radius: 99px; white-space: nowrap; }
   .section-arrow { font-size: 11px; transition: transform .2s; }
   .section-arrow.open { transform: rotate(90deg); }
@@ -103,7 +110,7 @@
     <polyline points="14 2 14 8 20 8"/>
     <line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>
   </svg>
-  <h1>Robot Framework Test Analyser</h1>
+  <h1>Robot Framework Test Analyser — Android &amp; Web</h1>
 </header>
 
 <div id="upload-zone">
@@ -113,8 +120,8 @@
       <polyline points="14 2 14 8 20 8"/>
     </svg>
     <p class="main">Drop your output.xml here</p>
-    <p class="sub">Robot Framework XML result file</p>
-    <p class="note"></p>
+    <p class="sub">Robot Framework XML result file — Android &amp; Web UI patterns</p>
+    <p class="note">Streams in 8 MB chunks — handles 1 GB+ without crashing</p>
     <button id="browse-btn">Browse file</button>
     <input type="file" id="file-input" accept=".xml">
   </div>
@@ -150,62 +157,190 @@
     <div class="bar-label"><span>Pass rate</span><span id="bar-pct-lbl">0%</span></div>
     <div id="bar-track"><div id="bar-fill"></div></div>
   </div>
+  <div id="mode-bar">
+    <span>Show:</span>
+    <button class="mode-btn active" data-mode="all">All platforms</button>
+    <button class="mode-btn" data-mode="android">Android only</button>
+    <button class="mode-btn" data-mode="web">Web only</button>
+  </div>
   <div id="filter-bar">
-    <label for="filter-select">Filter:</label>
+    <label for="filter-select">Filter by category:</label>
     <select id="filter-select"></select>
   </div>
   <div id="sections-container"></div>
   <div id="all-passed">✓ All tests passed!</div>
 </div>
 
-<footer>RF Test Analyser &nbsp;·&nbsp; No data leaves your browser &nbsp;·&nbsp; <a href="https://pages.github.com" target="_blank">Host free on GitHub Pages</a></footer>
+<footer>RF Test Analyser · Android &amp; Web · No data leaves your browser · <a href="https://pages.github.com" target="_blank">Host free on GitHub Pages</a></footer>
 
 <script>
-/* ── Failure patterns ─────────────────────────────────────────────────────── */
+/* ═══════════════════════════════════════════════════════════════════════════
+   FAILURE PATTERNS
+   Each entry: { re, category, platform, color, fix }
+   platform: "android" | "web" | "common"
+═══════════════════════════════════════════════════════════════════════════ */
 const PATTERNS = [
-  { re: /UiObjectNotFoundError|UiObjectNotFoundException|UI object identification failed/i,
-    category: "UI Element Not Found", color: "#c0392b",
-    fix: "The UI element could not be located on screen. Check if the Android UI layout has changed, verify element selectors (text, resourceId, className), and ensure the device is in the expected state. Add explicit waits before element interactions." },
-  { re: /ValueError.*int|str.*cannot be interpreted as an integer|TypeError.*'str' object cannot/i,
-    category: "Type Error (str/int mismatch)", color: "#d35400",
-    fix: "A string is being passed where an integer is expected. Add explicit int() conversion in the keyword/library code. Check test data and variable bindings for unexpected string types." },
-  { re: /No keyword with name|keyword.*not found/i,
-    category: "Missing Keyword", color: "#6c3483",
-    fix: "A keyword referenced in the test does not exist or is not imported. Check for typos in the keyword name, verify the correct library/resource file is imported, and ensure the keyword is in scope." },
-  { re: /ADB command failed|adb.*forward|Could not get display/i,
-    category: "ADB / Device Error", color: "#1a5276",
-    fix: "An ADB command failed due to device connectivity or port issues. Ensure the device is connected and authorised, check USB/network connection, and verify no port conflicts." },
-  { re: /screen saver is not|Navigation Mode is not available|Variable.*not found/i,
-    category: "Device State / Config Mismatch", color: "#1e5631",
-    fix: "The device is not in the expected state or a config/variable is missing. Verify device settings match test preconditions and confirm the feature is supported on this device/OS version." },
-  { re: /Connection aborted|RemoteDisconnected|Remote end closed/i,
-    category: "Network / Remote Disconnect", color: "#7b241c",
-    fix: "The remote connection dropped during the test. Check network stability, device health, and consider adding retry logic or increasing timeout values." },
-  { re: /Setup failed|teardown failed/i,
-    category: "Setup / Teardown Failure", color: "#922b5e",
-    fix: "The test setup or teardown step failed before the actual test could run. Fix the underlying setup issue first — other failures in the same test may be secondary." },
-  { re: /LightDoze mode=\s*$|doze mode/i,
-    category: "Power State Error", color: "#4a4a4a",
-    fix: "The device did not enter the expected power/doze state. Verify power management settings, check for OEM customisations, and confirm the correct OEMConfig keys are applied." },
-  { re: /SyntaxError|invalid syntax/i,
-    category: "Syntax / Variable Resolution Error", color: "#0e6251",
-    fix: "A variable resolved to an empty or unexpected value causing a syntax error. Check all required variables (device serial, API level) are set correctly in suite setup. An empty device serial is a common cause." },
-  { re: /IndexError|out of the range/i,
-    category: "Index / List Error", color: "#784212",
-    fix: "An empty list is being accessed by index. A UI query likely returned no results. Add existence checks before accessing list elements." },
-  { re: /Screen capture is disabled/i,
-    category: "Screenshot Disabled", color: "#1f618d",
-    fix: "A previous test disabled screenshots and teardown did not restore the setting. Ensure screenshot state is reset in test teardown." },
+
+  /* ── Android UI ─────────────────────────────────────────────────────── */
+  {
+    re: /UiObjectNotFoundError|UiObjectNotFoundException|UI object identification failed/i,
+    category: "UI Element Not Found", platform: "android", color: "#c0392b",
+    fix: "The Android UI element could not be located on screen. Check if the UI layout has changed in a newer OS/app version, verify element selectors (text, resourceId, className, contentDescription), and ensure the device is in the expected state. Add explicit waits before element interactions."
+  },
+  {
+    re: /ADB command failed|adb.*forward|Could not get display state/i,
+    category: "ADB / Device Error", platform: "android", color: "#1a5276",
+    fix: "An ADB command failed due to device connectivity or port issues. Ensure the device is connected and authorised ('adb devices' shows it), check USB/network connection, verify no port conflicts. Re-running the suite setup may resolve transient issues."
+  },
+  {
+    re: /LightDoze mode=\s*$|doze mode/i,
+    category: "Power State Error", platform: "android", color: "#4a4a4a",
+    fix: "The device did not enter the expected power/doze state. Verify device power management settings, check if battery optimisation or OEM customisations are interfering, and confirm the correct OEMConfig keys are applied."
+  },
+  {
+    re: /screen saver is not|Navigation Mode is not available/i,
+    category: "Device State / Config Mismatch", platform: "android", color: "#1e5631",
+    fix: "The device is not in the expected state or a config/variable is missing. Verify device settings match test preconditions, check variable definitions in resource files, and confirm the feature is supported on this device/OS version."
+  },
+  {
+    re: /Screen capture is disabled/i,
+    category: "Screenshot Disabled", platform: "android", color: "#1f618d",
+    fix: "A previous test disabled screenshots and teardown did not restore the setting. Ensure the screenshot state is explicitly reset in test teardown, regardless of pass or fail."
+  },
+
+  /* ── Web UI — element & timing ──────────────────────────────────────── */
+  {
+    re: /ElementNotInteractableException|element not interactable|not interactable/i,
+    category: "Element Not Interactable", platform: "web", color: "#1a6b8a",
+    fix: "The element exists in the DOM but cannot be interacted with — it may be hidden, disabled, or covered by an overlay (modal, cookie banner, sticky header). Scroll it into view, wait for overlays to dismiss, or use JavaScript click as a last resort. Check z-index and visibility in the browser DevTools."
+  },
+  {
+    re: /StaleElementReferenceException|stale element reference|stale element/i,
+    category: "Stale Element Reference", platform: "web", color: "#7d6608",
+    fix: "The page re-rendered or navigated between finding the element and interacting with it. Re-fetch the element immediately before use, avoid storing element references across page loads, and add waits after any action that triggers a page change."
+  },
+  {
+    re: /TimeoutException|timed out waiting|Wait Until.*timeout|Timeout.*waiting|Element.*not.*visible.*timeout|timeout.*exceed/i,
+    category: "Wait / Timeout", platform: "web", color: "#6e2f1a",
+    fix: "The element or condition was not met within the timeout period. Increase the wait timeout, check that the selector is correct, verify the page actually loads the element (check for lazy loading, JS rendering delays), and ensure the test environment has adequate performance."
+  },
+  {
+    re: /ElementClickInterceptedException|element click intercepted|Other element would receive the click/i,
+    category: "Element Click Intercepted", platform: "web", color: "#154360",
+    fix: "Another element is blocking the click target — usually a modal, cookie consent banner, sticky nav bar, or loading spinner. Wait for the blocking element to disappear before clicking, or scroll the target element into view. Use 'Wait Until Element Is Not Visible' on the overlay first."
+  },
+
+  /* ── Web UI — page load & navigation ───────────────────────────────── */
+  {
+    re: /ERR_CONNECTION|net::ERR|Navigation.*failed|Page.*not.*load|Failed to load|browser.*unreachable/i,
+    category: "Browser / Network Error", platform: "web", color: "#1b5e3b",
+    fix: "The browser could not reach the target URL. Check that the application server is running, verify environment URLs in your test config, check proxy or firewall settings in CI, and confirm the browser/driver is not crashing on startup."
+  },
+  {
+    re: /\b404\b|\b500\b|\b502\b|\b503\b|unexpected.*status.*code|HTTP.*error|status code.*[45]\d\d/i,
+    category: "HTTP Error Response", platform: "web", color: "#922b21",
+    fix: "The server returned an error HTTP status. A 4xx means a client/request issue (wrong URL, missing auth, bad payload); a 5xx means a server-side problem. Check application logs, verify test data and API endpoints are correct, and ensure the backend is healthy in the test environment."
+  },
+  {
+    re: /WebDriverException|session.*not.*created|unable to connect.*driver|Chrome.*not.*reachable|driver.*not.*running|NoSuchDriverException/i,
+    category: "WebDriver / Session Error", platform: "web", color: "#4a235a",
+    fix: "WebDriver failed to start or lost connection to the browser. Verify ChromeDriver/GeckoDriver version matches the installed browser version, ensure the driver executable is on PATH, check that no leftover browser processes are blocking the port, and review CI machine resource limits."
+  },
+
+  /* ── Web UI — browser & JS ──────────────────────────────────────────── */
+  {
+    re: /JavascriptException|javascript error|JS.*error|Execute JavaScript.*failed/i,
+    category: "JavaScript Error", platform: "web", color: "#0b5345",
+    fix: "A JavaScript error was thrown during an 'Execute JavaScript' call. Check that the JS snippet is syntactically correct, that the DOM elements it references exist at the time of execution, and that the return value is serialisable. Open browser DevTools console for the full stack trace."
+  },
+  {
+    re: /UnexpectedAlertPresentException|unexpected alert.*open|Alert.*present|unexpected.*dialog/i,
+    category: "Unexpected Alert / Dialog", platform: "web", color: "#5d4037",
+    fix: "A browser alert, confirm, or prompt dialog appeared unexpectedly and blocked automation. Add handling with 'Handle Alert' or 'Dismiss Alert' in the relevant test steps. If the alert is expected, explicitly handle it; if not, investigate what action triggers it and prevent it in the test environment."
+  },
+  {
+    re: /SSL.*certificate|certificate.*error|insecure.*connection|ERR_CERT|certificate.*verify/i,
+    category: "SSL / Certificate Error", platform: "web", color: "#37474f",
+    fix: "The browser rejected the site's SSL certificate. In test environments, configure the browser to accept self-signed certs (e.g. '--ignore-certificate-errors' Chrome flag, 'accept_insecure_certs' capability), or install the cert in the OS/browser trust store. Never ignore SSL errors in production testing."
+  },
+
+  /* ── Web UI — assertions & validation ──────────────────────────────── */
+  {
+    re: /AssertionError|should be equal|should contain|should not contain|should be|expected.*but.*was|expected.*got/i,
+    category: "Assertion Failure", platform: "web", color: "#2e7d32",
+    fix: "A value assertion failed — actual output did not match expected. Check that test data and expected values are up to date, verify the application has not changed its output format, and add logging to capture the actual value on failure. Consider whether the assertion timing is correct (page may still be updating)."
+  },
+  {
+    re: /Page Should Contain|Element Should Be Visible|Element Should Not Be Visible|Element Should Contain|Element Should Have Attribute|page.*should.*contain.*text/i,
+    category: "Page Content / Visibility Check Failed", platform: "web", color: "#558b2f",
+    fix: "A page content or element visibility assertion failed. The element may not be present, may be hidden, or the expected text may have changed. Verify selectors, check if content is inside an iframe, confirm the page has fully loaded before asserting, and review recent UI changes in the application."
+  },
+
+  /* ── Web UI — auth & session ────────────────────────────────────────── */
+  {
+    re: /\b401\b|\b403\b|Unauthorized|Forbidden|login.*failed|authentication.*failed|session.*expired|invalid.*token|not.*logged.*in/i,
+    category: "Auth / Session Failure", platform: "web", color: "#880e4f",
+    fix: "Authentication or authorisation failed. Check that test credentials are correct and not expired, verify the login keyword executes successfully before dependent tests, ensure session cookies/tokens are being stored and reused correctly, and check if the application has rate-limited or locked the test account."
+  },
+
+  /* ── Web UI — locators & frames ─────────────────────────────────────── */
+  {
+    re: /XPathEvalError|invalid.*selector|invalid.*xpath|CSSSelector.*invalid|SyntaxError.*xpath|The expression.*XPath|Malformed.*selector/i,
+    category: "Invalid Selector / XPath", platform: "web", color: "#4527a0",
+    fix: "The element locator has a syntax error. Validate the XPath or CSS selector in browser DevTools before using it in a test. Watch for special characters in attribute values that need escaping, avoid absolute XPaths that break on minor DOM changes, and prefer relative XPaths or CSS selectors with stable attributes."
+  },
+  {
+    re: /No frame.*element|frame.*not.*found|Select Frame.*failed|NoSuchFrameException|Invalid.*frame/i,
+    category: "Frame / iFrame Error", platform: "web", color: "#00695c",
+    fix: "The test tried to switch to an iframe that doesn't exist or isn't loaded yet. Always wait for the iframe to be present before selecting it, use the correct frame locator (name, index, or WebElement), and remember to switch back to the default content after interacting with the frame."
+  },
+
+  /* ── Common (Android & Web) ─────────────────────────────────────────── */
+  {
+    re: /No keyword with name|keyword.*not found/i,
+    category: "Missing Keyword", platform: "common", color: "#6c3483",
+    fix: "A keyword referenced in the test does not exist or is not imported. Check for typos in the keyword name, verify the correct library/resource file is imported, and ensure the keyword is defined in the correct scope."
+  },
+  {
+    re: /ValueError.*int|str.*cannot be interpreted as an integer|TypeError.*'str' object cannot/i,
+    category: "Type Error (str/int mismatch)", platform: "common", color: "#d35400",
+    fix: "A string is being passed where an integer is expected. Add explicit int() conversion in the keyword/library code. Check test data and variable bindings for unexpected string types — often caused by a shared utility function."
+  },
+  {
+    re: /Connection aborted|RemoteDisconnected|Remote end closed connection/i,
+    category: "Network / Remote Disconnect", platform: "common", color: "#7b241c",
+    fix: "The remote connection dropped during the test. Check network stability, device/server health, and consider adding retry logic or increasing timeout values. In CI environments, check resource limits and network configuration."
+  },
+  {
+    re: /Setup failed|teardown failed/i,
+    category: "Setup / Teardown Failure", platform: "common", color: "#922b5e",
+    fix: "The test setup or teardown step failed before the actual test could run. Fix the underlying setup issue first — other failures in the same test may be secondary. Check device/browser readiness and precondition steps."
+  },
+  {
+    re: /SyntaxError|invalid syntax/i,
+    category: "Syntax / Variable Resolution Error", platform: "common", color: "#0e6251",
+    fix: "A variable resolved to an empty or unexpected value causing a syntax error. Check that all required variables (device serial, API level, base URL) are set correctly in suite setup. An empty device serial or missing environment variable is a common cause."
+  },
+  {
+    re: /IndexError|out of the range/i,
+    category: "Index / List Error", platform: "common", color: "#784212",
+    fix: "An empty list or collection is being accessed by index. A UI query likely returned no results. Add existence checks before accessing list elements and verify that the query locator is correct."
+  },
+  {
+    re: /Variable.*not found|\$\{[^}]+\}.*not.*defined|variable.*undefined/i,
+    category: "Variable Not Found", platform: "common", color: "#34495e",
+    fix: "A Robot Framework variable is referenced but was never defined or set. Check resource file imports, suite/test variable declarations, and ensure setup keywords that set variables actually ran successfully. Look for conditional branches where the variable may not be set in all paths."
+  },
 ];
 
-/* Catch-all for 'Testcase failed' with no further detail */
+/* Catch-all patterns at the end — checked only if nothing above matched */
 const UNKNOWN_DETAIL = {
-  category: "Testcase Failed (no detail)", color: "#7f8c8d",
-  fix: "The test reported 'Testcase failed' with no further error message. This usually means the test framework caught and swallowed the real exception, or a shared setup step failed silently. Enable verbose logging, check suite setup, and verify device connectivity. Review the full HTML Robot Framework report for the actual failing keyword."
+  category: "Testcase Failed (no detail)", platform: "common", color: "#7f8c8d",
+  fix: "The test reported 'Testcase failed' with no further error message. This usually means the test framework caught and swallowed the real exception, or a shared setup step failed silently. Enable verbose logging (--loglevel DEBUG), check suite setup logs, verify device/browser connectivity, and review the full Robot Framework HTML report for the failing keyword."
 };
 const UNKNOWN = {
-  category: "General / Unknown Failure", color: "#555555",
-  fix: "No specific error pattern matched. Review the full test log for the root cause. Check recent code or config changes that may have affected this test."
+  category: "General / Unknown Failure", platform: "common", color: "#555555",
+  fix: "No specific error pattern matched. Review the full test log and the Robot Framework HTML report for the root cause. Check recent code or config changes that may have affected this test."
 };
 
 function classify(msg) {
@@ -219,19 +354,14 @@ function unesc(s) {
           .replace(/&amp;/g,"&").replace(/&quot;/g,'"').replace(/&apos;/g,"'");
 }
 
-/* ── Streaming chunked parser ─────────────────────────────────────────────── */
-/*
- * Robot Framework XML has two different formats for the status message
- * depending on the RF version:
- *
- *   Format A (attribute):  <status status="FAIL" message="Error detail..." />
- *   Format B (text node):  <status status="FAIL">Error detail...</status>
- *
- * We must handle BOTH. We also always use the LAST <status> inside each
- * <test> block — the test's own status is always written last, after all
- * nested keyword statuses.
- */
-const CHUNK_SIZE = 8 * 1024 * 1024;
+/* ═══════════════════════════════════════════════════════════════════════════
+   STREAMING CHUNKED PARSER
+   Handles both RF status message formats:
+     Format A (attribute):  <status status="FAIL" message="Error..." />
+     Format B (text node):  <status status="FAIL">Error...</status>
+   Always uses the LAST <status> in each <test> block (test's own status).
+═══════════════════════════════════════════════════════════════════════════ */
+const CHUNK_SIZE = 8 * 1024 * 1024; // 8 MB
 
 function streamParseFile(file, onProgress, onDone) {
   const passed = [], failed = [];
@@ -240,34 +370,21 @@ function streamParseFile(file, onProgress, onDone) {
 
   const TEST_RE = /<test\b([^>]*)>([\s\S]*?)<\/test>/g;
   const NAME_RE = /\bname="([^"]*)"/;
-
-  // Self-closing:  <status status="FAIL" message="..." />
   const SC_RE   = /<status\b([^>]*?)\/>/g;
-  // Text content:  <status status="FAIL">message text</status>
-  // [^<]* ensures we only capture plain text, not nested XML
   const TEXT_RE = /<status\b([^>]*)>([^<]*)<\/status>/g;
-
-  const ST_RE  = /\bstatus="([^"]*)"/;
-  const MSG_RE = /\bmessage="([^"]*)"/;
+  const ST_RE   = /\bstatus="([^"]*)"/;
+  const MSG_RE  = /\bmessage="([^"]*)"/;
 
   function extractLastStatus(inner) {
-    // Collect all status elements with their position, handling both formats
     const items = [];
-
     SC_RE.lastIndex = 0;
     let m;
-    while ((m = SC_RE.exec(inner)) !== null) {
+    while ((m = SC_RE.exec(inner)) !== null)
       items.push({ pos: m.index, attrs: m[1], text: null });
-    }
-
     TEXT_RE.lastIndex = 0;
-    while ((m = TEXT_RE.exec(inner)) !== null) {
+    while ((m = TEXT_RE.exec(inner)) !== null)
       items.push({ pos: m.index, attrs: m[1], text: m[2].trim() });
-    }
-
     if (!items.length) return null;
-
-    // The last status by position is the test's own direct child
     items.sort((a, b) => a.pos - b.pos);
     return items[items.length - 1];
   }
@@ -275,26 +392,19 @@ function streamParseFile(file, onProgress, onDone) {
   function processText(text) {
     const combined = carry + text;
     let lastEnd = 0;
-
     TEST_RE.lastIndex = 0;
     let m;
     while ((m = TEST_RE.exec(combined)) !== null) {
-      const tagAttrs = m[1];
-      const inner    = m[2];
+      const tagAttrs = m[1], inner = m[2];
       lastEnd = TEST_RE.lastIndex;
-
       const nameM = NAME_RE.exec(tagAttrs);
       if (!nameM) continue;
       const name = unesc(nameM[1]);
-
       const last = extractLastStatus(inner);
       if (!last) continue;
-
       const stM = ST_RE.exec(last.attrs);
       if (!stM) continue;
       const st = stM[1];
-
-      // Message: prefer text content (Format B), fall back to message attr (Format A)
       let msg = "";
       if (last.text !== null && last.text !== "") {
         msg = unesc(last.text);
@@ -302,11 +412,9 @@ function streamParseFile(file, onProgress, onDone) {
         const msgM = MSG_RE.exec(last.attrs);
         if (msgM) msg = unesc(msgM[1]).trim();
       }
-
       if (st === "FAIL") failed.push({ name, msg, pattern: classify(msg) });
       else               passed.push(name);
     }
-
     carry = lastEnd > 0 ? combined.slice(lastEnd) : combined;
     if (carry.length > CHUNK_SIZE * 3) carry = carry.slice(-CHUNK_SIZE);
   }
@@ -317,7 +425,7 @@ function streamParseFile(file, onProgress, onDone) {
       onDone(passed, failed);
       return;
     }
-    const slice  = file.slice(offset, offset + CHUNK_SIZE);
+    const slice = file.slice(offset, offset + CHUNK_SIZE);
     const reader = new FileReader();
     reader.onload = e => {
       const text = decoder.decode(new Uint8Array(e.target.result), { stream: true });
@@ -329,13 +437,14 @@ function streamParseFile(file, onProgress, onDone) {
     reader.onerror = () => showError("Error reading file at byte " + offset);
     reader.readAsArrayBuffer(slice);
   }
-
   readNext();
 }
 
-/* ── Rendering ────────────────────────────────────────────────────────────── */
+/* ═══════════════════════════════════════════════════════════════════════════
+   RENDERING
+═══════════════════════════════════════════════════════════════════════════ */
 const PER_PAGE = 50;
-let globalGrouped = {};
+let globalGrouped = {}, currentMode = "all";
 
 function hexToRgba(hex, a) {
   const r = parseInt(hex.slice(1,3),16), g = parseInt(hex.slice(3,5),16), b = parseInt(hex.slice(5,7),16);
@@ -351,6 +460,12 @@ function buildGrouped(failed) {
   return g;
 }
 
+function platformLabel(p) {
+  if (p === "android") return "Android";
+  if (p === "web")     return "Web";
+  return "Common";
+}
+
 function renderSection(cat, tests, expanded) {
   const p = tests[0].pattern;
   const sec = document.createElement("div");
@@ -361,6 +476,7 @@ function renderSection(cat, tests, expanded) {
   header.style.background = p.color;
   header.innerHTML = `
     <span class="section-title">${cat}</span>
+    <span class="section-platform">${platformLabel(p.platform)}</span>
     <span class="section-count">${tests.length.toLocaleString()} test${tests.length!==1?"s":""}</span>
     <span class="section-arrow${expanded?" open":""}">▶</span>`;
 
@@ -433,15 +549,53 @@ function renderSection(cat, tests, expanded) {
   return sec;
 }
 
-function renderSections(grouped) {
-  const container = document.getElementById("sections-container");
-  const allPassed = document.getElementById("all-passed");
+function filteredGrouped(mode, catFilter) {
+  let g = globalGrouped;
+
+  // Platform mode filter
+  if (mode !== "all") {
+    g = {};
+    for (const [cat, tests] of Object.entries(globalGrouped)) {
+      const p = tests[0].pattern;
+      if (p.platform === mode || p.platform === "common") g[cat] = tests;
+    }
+  }
+
+  // Category dropdown filter
+  if (catFilter && catFilter !== "all" && g[catFilter]) {
+    g = { [catFilter]: g[catFilter] };
+  }
+
+  return g;
+}
+
+function renderSections() {
+  const container  = document.getElementById("sections-container");
+  const allPassed  = document.getElementById("all-passed");
+  const catFilter  = document.getElementById("filter-select").value;
+  const grouped    = filteredGrouped(currentMode, catFilter);
+
   container.innerHTML = "";
   if (!Object.keys(grouped).length) { allPassed.style.display = "block"; return; }
   allPassed.style.display = "none";
+
   Object.entries(grouped)
-    .sort((a,b) => b[1].length - a[1].length)
+    .sort((a, b) => b[1].length - a[1].length)
     .forEach(([cat, tests], i) => container.appendChild(renderSection(cat, tests, i === 0)));
+}
+
+function populateFilter() {
+  const sel = document.getElementById("filter-select");
+  sel.innerHTML = '<option value="all">All categories</option>';
+  Object.entries(globalGrouped)
+    .sort((a, b) => b[1].length - a[1].length)
+    .forEach(([cat, tests]) => {
+      const opt = document.createElement("option");
+      opt.value = cat;
+      const p = tests[0].pattern;
+      opt.textContent = `[${platformLabel(p.platform)}] ${cat} (${tests.length.toLocaleString()})`;
+      sel.appendChild(opt);
+    });
 }
 
 function showResults(filename, passed, failed) {
@@ -461,34 +615,28 @@ function showResults(filename, passed, failed) {
   document.getElementById("bar-pct-lbl").textContent  = pct + "%";
   document.getElementById("bar-fill").style.width     = pct + "%";
 
-  const sel = document.getElementById("filter-select");
-  sel.innerHTML = '<option value="all">All categories</option>';
-  Object.entries(globalGrouped)
-    .sort((a,b) => b[1].length - a[1].length)
-    .forEach(([cat, tests]) => {
-      const opt = document.createElement("option");
-      opt.value = cat;
-      opt.textContent = `${cat} (${tests.length.toLocaleString()})`;
-      sel.appendChild(opt);
-    });
-  sel.onchange = () => {
-    const v = sel.value;
-    renderSections(v === "all" ? globalGrouped : { [v]: globalGrouped[v] });
-  };
-  renderSections(globalGrouped);
+  populateFilter();
+  renderSections();
 }
 
+/* ═══════════════════════════════════════════════════════════════════════════
+   ERROR / UTILITY
+═══════════════════════════════════════════════════════════════════════════ */
 function showError(msg) {
-  document.getElementById("error-msg").style.display    = "block";
-  document.getElementById("error-text").textContent     = msg;
+  document.getElementById("error-msg").style.display     = "block";
+  document.getElementById("error-text").textContent      = msg;
   document.getElementById("progress-zone").style.display = "none";
 }
 function hideError() { document.getElementById("error-msg").style.display = "none"; }
 
 function startParsing(file) {
   if (!file) return;
-  if (!file.name.toLowerCase().endsWith(".xml")) { showError("Please select a Robot Framework XML output file (.xml)"); return; }
+  if (!file.name.toLowerCase().endsWith(".xml")) {
+    showError("Please select a Robot Framework XML output file (.xml)"); return;
+  }
   hideError();
+  currentMode = "all";
+  document.querySelectorAll(".mode-btn").forEach(b => b.classList.toggle("active", b.dataset.mode === "all"));
   document.getElementById("upload-zone").style.display   = "none";
   document.getElementById("progress-zone").style.display = "block";
   document.getElementById("prog-file").textContent =
@@ -515,15 +663,31 @@ function startParsing(file) {
   );
 }
 
+/* ═══════════════════════════════════════════════════════════════════════════
+   EVENTS
+═══════════════════════════════════════════════════════════════════════════ */
 document.getElementById("browse-btn").onclick  = () => document.getElementById("file-input").click();
 document.getElementById("file-input").onchange = e  => startParsing(e.target.files[0]);
-document.getElementById("reset-btn").onclick   = () => {
+
+document.getElementById("reset-btn").onclick = () => {
   document.getElementById("upload-zone").style.display   = "block";
   document.getElementById("results").style.display       = "none";
   document.getElementById("progress-zone").style.display = "none";
   document.getElementById("file-input").value = "";
-  globalGrouped = {};
+  globalGrouped = {}; currentMode = "all";
 };
+
+document.querySelectorAll(".mode-btn").forEach(btn => {
+  btn.onclick = () => {
+    currentMode = btn.dataset.mode;
+    document.querySelectorAll(".mode-btn").forEach(b => b.classList.toggle("active", b === btn));
+    document.getElementById("filter-select").value = "all";
+    renderSections();
+  };
+});
+
+document.getElementById("filter-select").onchange = () => renderSections();
+
 const dz = document.getElementById("dropzone");
 dz.ondragover = e => { e.preventDefault(); dz.classList.add("drag"); };
 dz.ondragleave = () => dz.classList.remove("drag");
